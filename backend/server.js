@@ -16,6 +16,7 @@ const bugRoutes = require('./routes/bugRoutes');
 const userRoutes = require('./routes/userRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const aiRoutes = require('./routes/aiRoutes');
+const mockDbMiddleware = require('./middleware/mockDbMiddleware');
 
 // Initialize Express app
 const app = express();
@@ -52,7 +53,6 @@ if (process.env.NODE_ENV === 'development') {
 
 // ------- Routes -------
 if (process.env.MOCK_DB?.trim() === 'true') {
-  const mockDbMiddleware = require('./middleware/mockDbMiddleware');
   app.use('/api', mockDbMiddleware);
 } else {
   app.use('/api/auth', authRoutes);
