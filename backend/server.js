@@ -16,10 +16,14 @@ const aiRoutes = require('./routes/aiRoutes');
 // Initialize Express app
 const app = express();
 
-// Connect to MongoDB, then auto-seed if empty
-connectDB().then(() => {
-  seedIfEmpty().catch(err => console.error('Auto-seed error:', err));
-});
+// Connect to MongoDB, then auto-seed if empty (skip if MOCK_DB is enabled)
+if (process.env.MOCK_DB === 'true') {
+  console.log('⚡ MOCK_DB is enabled! Skipping MongoDB connection.');
+} else {
+  connectDB().then(() => {
+    seedIfEmpty().catch(err => console.error('Auto-seed error:', err));
+  });
+}
 
 // ------- Middleware -------
 app.use(helmet());
@@ -43,11 +47,16 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // ------- Routes -------
-app.use('/api/auth', authRoutes);
-app.use('/api/bugs', bugRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/projects', projectRoutes);
-app.use('/api/ai', aiRoutes);
+if (process.env.MOCK_DB === 'true') {
+  const mockDbMiddleware = require('./middleware/mockDbMiddleware');
+  app.use('/api', mockDbMiddleware);
+} else {
+  app.use('/api/auth', authRoutes);
+  app.use('/api/bugs', bugRoutes);
+  app.use('/api/users', userRoutes);
+  app.use('/api/projects', projectRoutes);
+  app.use('/api/ai', aiRoutes);
+}
 
 // Health check
 app.get('/api/health', (req, res) => {
