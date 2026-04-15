@@ -1,4 +1,8 @@
 require('dotenv').config();
+
+// Force MOCK_DB mode to true for CV/Portfolio deployment unconditionally
+process.env.MOCK_DB = 'true';
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
