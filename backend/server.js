@@ -17,7 +17,7 @@ const aiRoutes = require('./routes/aiRoutes');
 const app = express();
 
 // Connect to MongoDB, then auto-seed if empty (skip if MOCK_DB is enabled)
-if (process.env.MOCK_DB === 'true') {
+if (process.env.MOCK_DB?.trim() === 'true') {
   console.log('⚡ MOCK_DB is enabled! Skipping MongoDB connection.');
 } else {
   connectDB().then(() => {
@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // ------- Routes -------
-if (process.env.MOCK_DB === 'true') {
+if (process.env.MOCK_DB?.trim() === 'true') {
   const mockDbMiddleware = require('./middleware/mockDbMiddleware');
   app.use('/api', mockDbMiddleware);
 } else {
